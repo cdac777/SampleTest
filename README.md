@@ -7,7 +7,7 @@
    - PyCharm
    - PyTest
    - Libraries (ie., time)
-   - Git and GitHub repository
+   - GitHub repository
 
 2. **Activity highlight:**
 
