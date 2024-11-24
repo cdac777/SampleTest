@@ -25,4 +25,4 @@
 
 ## End-To-End coverage documentation
 
-https://github.com/njmlopez17/react-testing-starter/blob/5c27b453deaead3f152483d994f0d1c80e86eda5/Test%20Automation%20End-to-End%20documentation.pdf
+https://github.com/njmlopez17/Python_Selenium_PyCharm_Pytest/blob/b2720978c2e222a69f52d097b0b459c82e2bd89c/Test%20Automation%20End-to-End%20documentation.pdf
