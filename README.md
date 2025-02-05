@@ -386,6 +386,8 @@ public class QuizAppExtentReportDetails extends SignUpTest1 implements ITestList
 ---------------------------*****-------------------------------------------
 Required dependencies
 
+
+
 <dependencies>
   
   <!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
@@ -457,8 +459,6 @@ Required dependencies
     <scope>test</scope>
 </dependency>
   
- 
-    <dependency>
  -----------------------------------------------------------------******------------------------------------------------------------------------
 
  MyListernes class
