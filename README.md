@@ -65,3 +65,118 @@ public class QuizAppScenario {
 
 }
 ---------------------------------------------------------------------------------*****-------------------------------------------------------
+
+Extent Report
+
+package com.hematite.test;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import org.testng.ITestContext;
+import org.testng.ITestListener;
+import org.testng.ITestResult;
+
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
+import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+import com.aventstack.extentreports.reporter.configuration.Theme;
+
+public class QuizAppExtentReport implements ITestListener {
+
+    public ExtentSparkReporter sparkReporter;
+    public ExtentReports extent;
+    public ExtentTest test;
+    private WebDriver driver;
+
+    @Override
+    public void onStart(ITestContext context) {
+        sparkReporter = new ExtentSparkReporter(System.getProperty("user.dir") + "/reports/QuizAppReport.html");
+
+        sparkReporter.config().setDocumentTitle("Hematite QuizApp Report");
+        sparkReporter.config().setReportName("Function Testing Of SignUp & Login Page");
+        sparkReporter.config().setTheme(Theme.DARK);
+
+        extent = new ExtentReports();
+        extent.attachReporter(sparkReporter);
+
+        extent.setSystemInfo("QuizAppURL", "http://quiz.hematitecorp.com/");
+        extent.setSystemInfo("Environment", "SQA");
+        extent.setSystemInfo("Tester Name", "Monica Fulare");
+        extent.setSystemInfo("OS", "Windows-11");
+        extent.setSystemInfo("BrowserName", "Chrome");
+    }
+
+    @Override
+    public void onTestSuccess(ITestResult result) {
+        test = extent.createTest(result.getName());
+        test.log(Status.PASS, "TestCase Passed: " + result.getName());
+    }
+
+    @Override
+    public void onTestFailure(ITestResult result) {
+        test = extent.createTest(result.getName());
+        test.log(Status.FAIL, "TestCase Failed: " + result.getName());
+        test.log(Status.FAIL, "Error: " + result.getThrowable());
+
+        // Capture and attach screenshot
+        if (driver != null) {
+            String screenshotPath = captureScreenshot(result.getName());
+            if (screenshotPath != null) {
+                try {
+                    test.addScreenCaptureFromPath(screenshotPath, "Failure Screenshot");
+                } catch (Exception e) {
+                    test.log(Status.FAIL, "Failed to attach screenshot: " + e.getMessage());
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onTestSkipped(ITestResult result) {
+        test = extent.createTest(result.getName());
+        test.log(Status.SKIP, "TestCase Skipped: " + result.getName());
+        test.log(Status.SKIP, "Reason: " + result.getThrowable());
+    }
+
+    @Override
+    public void onFinish(ITestContext context) {
+        extent.flush();
+    }
+
+    // Utility method to capture a screenshot
+    private String captureScreenshot(String testName) {
+        String screenshotDirectoryPath = System.getProperty("user.dir") + "/reports/screenshots/";
+        String screenshotPath = screenshotDirectoryPath + testName + ".png";
+        File screenshotFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+
+        try {
+            File screenshotDir = new File(screenshotDirectoryPath);
+            if (!screenshotDir.exists()) {
+                boolean isDirCreated = screenshotDir.mkdirs();
+                if (!isDirCreated) {
+                    System.err.println("Failed to create screenshots directory: " + screenshotDirectoryPath);
+                    return null;
+                }
+            }
+
+            File destinationFile = new File(screenshotPath);
+            Files.copy(screenshotFile.toPath(), destinationFile.toPath());
+            return screenshotPath;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    // Setter method to pass WebDriver instance (should be called in your test class)
+    public void setDriver(WebDriver driver) {
+        this.driver = driver;
+    }
+}
+
